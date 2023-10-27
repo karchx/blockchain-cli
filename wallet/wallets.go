@@ -2,12 +2,36 @@ package wallet
 
 import (
 	"bytes"
+	"crypto/ecdsa"
 	"crypto/elliptic"
+	"crypto/rand"
 	"encoding/gob"
+	"log"
 	"os"
 )
 
 const WALLET_FILE = "./tmp/wallets.data"
+
+func (ws *Wallets) SaveFile() {
+	var content bytes.Buffer
+	private, err := ecdsa.GenerateKey(P256Curve{elliptic.P256()}, rand.Reader)
+	if err != nil {
+		log.Panicln(err)
+	}
+	gob.Register(P256Curve{})
+	gob.Register(private)
+
+	encoder := gob.NewEncoder(&content)
+	err = encoder.Encode(ws)
+	if err != nil {
+		log.Panicln(err)
+	}
+
+	err = os.WriteFile(WALLET_FILE, content.Bytes(), 0644)
+	if err != nil {
+		log.Panicln(err)
+	}
+}
 
 func (ws *Wallets) loadFile() error {
 	if _, err := os.Stat("./tmp"); os.IsNotExist(err) {

@@ -52,5 +52,6 @@ func init() {
 func createWallet() {
 	wallets, _ := wallet.CreateWallet()
 	address := wallets.AddWallet(walletAlias)
+	wallets.SaveFile()
 	fmt.Printf("Wallet created with address %s and alias '%s'\n", address, walletAlias)
 }
