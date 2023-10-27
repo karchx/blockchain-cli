@@ -1,6 +1,7 @@
 package create
 
 import (
+	"blockchain-cli/wallet"
 	"errors"
 	"fmt"
 	"strconv"
@@ -49,5 +50,7 @@ func init() {
 }
 
 func createWallet() {
-	fmt.Printf("Wallet created with address %s and alias '%s'\n", "test", walletAlias)
+	wallets, _ := wallet.CreateWallet()
+	address := wallets.AddWallet(walletAlias)
+	fmt.Printf("Wallet created with address %s and alias '%s'\n", address, walletAlias)
 }
