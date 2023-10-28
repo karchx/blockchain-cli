@@ -2,32 +2,26 @@ package wallet
 
 import (
 	"bytes"
-	"crypto/ecdsa"
 	"crypto/elliptic"
-	"crypto/rand"
 	"encoding/gob"
+	"encoding/json"
 	"log"
 	"os"
 )
 
 const WALLET_FILE = "./tmp/wallets.data"
 
+type P struct {
+  Name string
+}
+
 func (ws *Wallets) SaveFile() {
-	var content bytes.Buffer
-	private, err := ecdsa.GenerateKey(P256Curve{elliptic.P256()}, rand.Reader)
-	if err != nil {
-		log.Panicln(err)
-	}
-	gob.Register(P256Curve{})
-	gob.Register(private)
+  data, err := json.Marshal(ws)
+  if err != nil {
+		log.Printf("Error json Marshal: %s", err.Error())
+  }
 
-	encoder := gob.NewEncoder(&content)
-	err = encoder.Encode(ws)
-	if err != nil {
-		log.Panicln(err)
-	}
-
-	err = os.WriteFile(WALLET_FILE, content.Bytes(), 0644)
+	err = os.WriteFile(WALLET_FILE, data, 0644)
 	if err != nil {
 		log.Panicln(err)
 	}
