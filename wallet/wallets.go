@@ -12,14 +12,14 @@ import (
 const WALLET_FILE = "./tmp/wallets.data"
 
 type P struct {
-  Name string
+	Name string
 }
 
 func (ws *Wallets) SaveFile() {
-  data, err := json.Marshal(ws)
-  if err != nil {
+	data, err := json.Marshal(ws)
+	if err != nil {
 		log.Printf("Error json Marshal: %s", err.Error())
-  }
+	}
 
 	err = os.WriteFile(WALLET_FILE, data, 0644)
 	if err != nil {
@@ -68,4 +68,14 @@ func (ws *Wallets) AddWallet(alias string) string {
 
 	ws.Wallets[address] = wallet
 	return address
+}
+
+func (ws *Wallets) GetAllAddresses() []string {
+	var addresses []string
+
+	for address := range ws.Wallets {
+		addresses = append(addresses, address)
+	}
+
+	return addresses
 }

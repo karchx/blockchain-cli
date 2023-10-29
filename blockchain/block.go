@@ -1,7 +1,12 @@
 package blockchain
 
+import (
+	"bytes"
+	"encoding/gob"
+)
+
 // createBlock generates a new block
-func createBlock(txns []*Transactions, prevHash []byte) *Block {
+func createBlock(txns []*Transaction, prevHash []byte) *Block {
 	block := &Block{
 		Hash:         []byte{},
 		Transactions: txns,
@@ -15,4 +20,24 @@ func createBlock(txns []*Transactions, prevHash []byte) *Block {
 	block.Hash = hash[:]
 	block.Nonce = nonce
 	return block
+}
+
+func (b *Block) serialize() []byte {
+	var res bytes.Buffer
+	encoder := gob.NewEncoder(&res)
+
+	err := encoder.Encode(b)
+	handle(err)
+
+	return res.Bytes()
+}
+
+func deserialize(data []byte) *Block {
+	var b Block
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+
+	err := decoder.Decode(&b)
+	handle(err)
+
+	return &b
 }

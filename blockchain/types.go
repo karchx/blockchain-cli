@@ -8,7 +8,7 @@ import (
 
 type Block struct {
 	Hash         []byte
-	Transactions []*Transactions
+	Transactions []*Transaction
 	PrevHash     []byte
 	Nonce        int
 }
@@ -28,7 +28,7 @@ type BlockChainIterator struct {
 	Database    *badger.DB
 }
 
-type Transactions struct {
+type Transaction struct {
 	ID      []byte
 	Inputs  []TxnInput
 	Outputs []TxnOutput

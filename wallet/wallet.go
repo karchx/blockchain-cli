@@ -1,6 +1,7 @@
 package wallet
 
 import (
+	"blockchain-cli/blockchain"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
@@ -66,4 +67,18 @@ func checksum(ripeMdHash []byte) []byte {
 	secondHash := sha256.Sum256(firsHash[:])
 
 	return secondHash[:checksumLength]
+}
+
+func GetBalance(address string) int {
+	chain := blockchain.ContinueBlockChain(address)
+	defer chain.Database.Close()
+
+	balance := 0
+	UTXOs := chain.FindUTXOs(address)
+
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+
+	return balance
 }
