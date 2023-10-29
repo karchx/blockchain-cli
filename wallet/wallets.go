@@ -29,7 +29,7 @@ func (ws *Wallets) SaveFile() {
 
 func (ws *Wallets) loadFile() error {
 	if _, err := os.Stat("./tmp"); os.IsNotExist(err) {
-		os.Mkdir("tmp", os.ModeDevice)
+		os.Mkdir("tmp", os.ModePerm)
 	}
 
 	if _, err := os.Stat(WALLET_FILE); os.IsNotExist(err) {
