@@ -12,6 +12,10 @@ import (
 	"github.com/dgraph-io/badger"
 )
 
+func genesis(coinbase *Transaction) *Block {
+	return createBlock([]*Transaction{coinbase}, []byte{})
+}
+
 func CreateBlockChain(address string) *BlockChain {
 	var lastHash []byte
 
@@ -27,7 +31,14 @@ func CreateBlockChain(address string) *BlockChain {
 	handle(err)
 
 	err = db.Update(func(txn *badger.Txn) error {
-		log.Printf("ADDRESS: %s", address)
+		cbtxn := CoinbaseTxn(address, GENESIS_DATA)
+		genesis := genesis(cbtxn)
+
+		log.Println("Genesis created")
+
+		err = txn.Set([]byte("lh"), genesis.Hash)
+		lastHash = genesis.Hash
+
 		return err
 	})
 	handle(err)
@@ -57,7 +68,7 @@ func ContinueBlockChain(address string) *BlockChain {
 		item, err := txn.Get([]byte("lh"))
 		handle(err)
 		err = item.Value(func(val []byte) error {
-			lastHash = nil
+			lastHash = val
 			return nil
 		})
 
